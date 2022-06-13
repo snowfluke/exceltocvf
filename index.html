@@ -162,8 +162,8 @@
 
             let obj = `BEGIN:VCARD
 VERSION:2.1
-N:${name};${pre};;;
-FN:${fn}
+N:${name.trim()};${pre};;;
+FN:${fn.trim()}
 TEL;CELL:${num}
 END:VCARD`;
 
