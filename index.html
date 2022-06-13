@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Excel to VCF Converter</title>
+    <style>
+      button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #1a631d;
+      }
+
+      .container {
+        margin: 0 auto;
+        width: 80%;
+        display: grid;
+        flex: 1;
+      }
+
+      .containergrid {
+        display: flex;
+      }
+
+      @media (max-width: 800px) {
+        .containergrid {
+          flex-direction: column;
+        }
+      }
+
+      #check {
+        width: 95%;
+        height: 1.5rem;
+        padding: 15px;
+      }
+
+      img {
+        margin: 15px;
+      }
+      textarea::placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+
+      textarea::-webkit-input-placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+
+      textarea:-moz-placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+
+      textarea::-moz-placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+
+      textarea:-ms-input-placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+
+      textarea::-ms-input-placeholder {
+        font-size: 1rem;
+        color: #9c9c9c;
+        font-family: "Roboto", sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="text-align: center">
+      Excel to VCF Converter - Made by
+      <a href="https://snowfluke.github.io/">snowfluke</a>
+    </h1>
+    <div class="container containergrid">
+      <div class="container">
+        <h2>Format:</h2>
+        <img src="./example.png" alt="" />
+      </div>
+      <div class="container">
+        <textarea
+          cols="120"
+          rows="10"
+          id="playground"
+          placeholder="Masukkan Nomor dan Nama langsung dari excel dengan ketentuan kolom seperti di gambar"
+        ></textarea>
+        <br />
+        <button onclick="generate()">Generate</button>
+      </div>
+    </div>
+
+    <script>
+      let playground = document.querySelector("#playground");
+
+      function showText(msg) {
+        status.innerHTML = msg;
+      }
+
+      function randomString() {
+        const alphabet = "abcdefghijklmnopqrstuvwxyz";
+
+        const one = alphabet[Math.floor(Math.random() * alphabet.length)];
+        const two = alphabet[Math.floor(Math.random() * alphabet.length)];
+        const three = alphabet[Math.floor(Math.random() * alphabet.length)];
+        const four = alphabet[Math.floor(Math.random() * alphabet.length)];
+        return one + two + three + four;
+      }
+
+      function generate() {
+        let text = playground.value;
+        if (!text) return alert("Text cannot empty");
+
+        let filter1 = text.trim().split("\n");
+        if (!filter1) return alert("list.js format invalid");
+
+        let filter2 = filter1.map((el) => el.split("	"));
+        if (filter2.some((el) => el.length !== 2))
+          return alert("list.js format invalid");
+
+        if (!filter2) return alert("Text cannot empty");
+        let tempObj = [];
+
+        try {
+          for (let i in filter2) {
+            let index = parseInt(i) + 1;
+
+            let num = filter2[i][0];
+            let name = filter2[i][1];
+
+            let obj = `BEGIN:VCARD
+VERSION:2.1
+N:${name};CM;;;
+FN:CM ${name}
+TEL;CELL:${num}
+END:VCARD`;
+
+            tempObj.push(obj);
+          }
+
+          playground.value = "";
+          var element = document.createElement("a");
+          element.setAttribute(
+            "href",
+            "data:text/plain;charset=utf-8," +
+              encodeURIComponent(tempObj.join("\n").trim())
+          );
+          element.setAttribute("download", `Contacts${randomString()}.vcf`);
+
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+    </script>
+  </body>
+</html>
