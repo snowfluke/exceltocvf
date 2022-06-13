@@ -38,6 +38,11 @@
         }
       }
 
+      input {
+        margin: 10px 0;
+        padding: 15px;
+      }
+
       #check {
         width: 95%;
         height: 1.5rem;
@@ -101,13 +106,16 @@
           id="playground"
           placeholder="Masukkan Nomor dan Nama langsung dari excel dengan ketentuan kolom seperti di gambar"
         ></textarea>
-        <br />
+        <input type="text" id="prefix" placeholder="Awalan nama kontak" />
+        <input type="text" id="suffix" placeholder="Akhiran nama kontak" />
         <button onclick="generate()">Generate</button>
       </div>
     </div>
 
     <script>
       let playground = document.querySelector("#playground");
+      let prefix = document.querySelector("#prefix");
+      let suffix = document.querySelector("#suffix");
 
       function showText(msg) {
         status.innerHTML = msg;
@@ -125,6 +133,9 @@
 
       function generate() {
         let text = playground.value;
+        let pre = prefix.value;
+        let post = suffix.value;
+
         if (!text) return alert("Text cannot empty");
 
         let filter1 = text.trim().split("\n");
@@ -142,12 +153,13 @@
             let index = parseInt(i) + 1;
 
             let num = filter2[i][0];
-            let name = filter2[i][1];
+            let name = post ? filter2[i][1] + " " + post : filter2[i][1];
+            let fn = pre ? pre + " " + name : name;
 
             let obj = `BEGIN:VCARD
 VERSION:2.1
-N:${name};CM;;;
-FN:CM ${name}
+N:${name};${pre};;;
+FN:${fn}
 TEL;CELL:${num}
 END:VCARD`;
 
@@ -155,6 +167,8 @@ END:VCARD`;
           }
 
           playground.value = "";
+          prefix.value = "";
+          suffix.value = "";
           var element = document.createElement("a");
           element.setAttribute(
             "href",
